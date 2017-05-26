@@ -1,7 +1,7 @@
 # Stan-Ymet-Xmet-Mrobust.R 
 # Accompanies the book:
-#   Kruschke, J. K. (2014). Doing Bayesian Data Analysis: 
-#   A Tutorial with R, JAGS, and Stan 2nd Edition. Academic Press / Elsevier.
+#  Kruschke, J. K. (2015). Doing Bayesian Data Analysis, Second Edition: 
+#  A Tutorial with R, JAGS, and Stan. Academic Press / Elsevier.
 
 source("DBDA2E-utilities.R")
 
@@ -48,23 +48,19 @@ genMCMC = function( data , xName="x" , yName="y" ,
     real beta1sigma ;
     unifLo <- sdY/1000 ;
     unifHi <- sdY*1000 ;
-    expLambda <- 1/29.0 ;
+    expLambda <- 1/30.0 ;
     beta1sigma <- 10*fabs(sdY/sdX) ;
     beta0sigma <- 10*fabs(meanX*sdY/sdX) ;
   }
   parameters {
     real beta0 ;
     real beta1 ;
-    real<lower=0> nuMinusOne ; 
+    real<lower=0> nu ; 
     real<lower=0> sigma ; 
-  }
-  transformed parameters {
-    real<lower=0> nu ;         // actually lower=1
-    nu <- nuMinusOne + 1 ;
   }
   model {
     sigma ~ uniform( unifLo , unifHi ) ; 
-    nuMinusOne ~ exponential( expLambda ) ;
+    nu ~ exponential( expLambda ) ;
     beta0 ~ normal( 0 , beta0sigma ) ;
     beta1 ~ normal( 0 , beta1sigma ) ;
     for ( i in 1:Ntotal ) {

@@ -1,7 +1,7 @@
 # Stan-Ymet-Xnom1grp-Mrobust.R 
 # Accompanies the book:
-#   Kruschke, J. K. (2014). Doing Bayesian Data Analysis: 
-#   A Tutorial with R and Stan, 2nd Edition. Academic Press / Elsevier.
+#  Kruschke, J. K. (2015). Doing Bayesian Data Analysis, Second Edition: 
+#  A Tutorial with R, JAGS, and Stan. Academic Press / Elsevier.
 
 source("DBDA2E-utilities.R")
 
@@ -39,21 +39,17 @@ genMCMC = function( data , numSavedSteps=50000 , saveName=NULL ) {
     unifLo <- sdY/1000 ;
     unifHi <- sdY*1000 ;
     normalSigma <- sdY*100 ;
-    expLambda <- 1/29.0 ;
+    expLambda <- 1/30.0 ;
   }
   parameters {
-    real<lower=0> nuMinusOne ; 
+    real<lower=0> nu ; 
     real mu ;
     real<lower=0> sigma ;
-  }
-  transformed parameters {
-    real<lower=0> nu ;  // actually lower=1
-    nu <- nuMinusOne + 1 ;
   }
   model {
     sigma ~ uniform( unifLo , unifHi ) ;
     mu ~ normal( meanY , normalSigma ) ; 
-    nuMinusOne ~ exponential( expLambda ) ;
+    nu ~ exponential( expLambda ) ;
     y ~ student_t( nu , mu , sigma ) ;
   }
   " # close quote for modelString
@@ -64,7 +60,7 @@ genMCMC = function( data , numSavedSteps=50000 , saveName=NULL ) {
   # Initial values of MCMC chains based on data:
   mu = mean(y) 
   sigma = sd(y) 
-  initsList = list( mu = mu , sigma = sigma , nuMinusOne = 4 )
+  initsList = list( mu = mu , sigma = sigma , nu = 5 )
   #-----------------------------------------------------------------------------
   # RUN THE CHAINS
   parameters = c( "mu" , "sigma" , "nu" )     # The parameters to be monitored

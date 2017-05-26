@@ -1,1 +1,0 @@
-# DoingBayesianDataAnalysis2ndEd

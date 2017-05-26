@@ -1,7 +1,7 @@
 # Stan-Ymet-XmetSsubj-MrobustHierQuadWt.R 
 # Accompanies the book:
-#   Kruschke, J. K. (2014). Doing Bayesian Data Analysis: 
-#   A Tutorial with R, JAGS, and Stan 2nd Edition. Academic Press / Elsevier.
+#  Kruschke, J. K. (2015). Doing Bayesian Data Analysis, Second Edition: 
+#  A Tutorial with R, JAGS, and Stan. Academic Press / Elsevier.
 
 source("DBDA2E-utilities.R")
 
@@ -77,10 +77,9 @@ genMCMC = function( data , xName="x" , yName="y" , sName="s" , wName=NULL ,
     real<lower=0> zbeta0sigma ;
     real<lower=0> zbeta1sigma ;
     real<lower=0> zbeta2sigma ;
-    real<lower=0> nuMinusOne ;
+    real<lower=0> nu ;
   }
   transformed parameters {
-    real<lower=0> nu ;
     real beta0[Nsubj] ;
     real beta1[Nsubj] ;
     real beta2[Nsubj] ;
@@ -88,7 +87,6 @@ genMCMC = function( data , xName="x" , yName="y" , sName="s" , wName=NULL ,
     real beta0mu ; 
     real beta1mu ; 
     real beta2mu ; 
-    nu <- nuMinusOne+1 ;
     // Transform to original scale:
     for ( j in 1:Nsubj ) { // could be vectorized...?
       beta2[j] <- zbeta2[j]*ysd/square(xsd) ;
@@ -108,7 +106,7 @@ genMCMC = function( data , xName="x" , yName="y" , sName="s" , wName=NULL ,
     zbeta0sigma ~ uniform( 1.0E-3 , 1.0E+3 ) ;
     zbeta1sigma ~ uniform( 1.0E-3 , 1.0E+3 ) ;
     zbeta2sigma ~ uniform( 1.0E-3 , 1.0E+3 ) ;
-    nuMinusOne ~ exponential(1/29.0) ;
+    nu ~ exponential(1/30.0) ;
     zbeta0 ~ normal( zbeta0mu , zbeta0sigma ) ; // vectorized
     zbeta1 ~ normal( zbeta1mu , zbeta1sigma ) ; // vectorized
     zbeta2 ~ normal( zbeta2mu , zbeta2sigma ) ; // vectorized

@@ -1,7 +1,7 @@
 # Stan-Ymet-Xnom2grp-MrobustHet.R 
 # Accompanies the book:
-#   Kruschke, J. K. (2014). Doing Bayesian Data Analysis: 
-#   A Tutorial with R and JAGS, 2nd Edition. Academic Press / Elsevier.
+#  Kruschke, J. K. (2015). Doing Bayesian Data Analysis, Second Edition: 
+#  A Tutorial with R, JAGS, and Stan. Academic Press / Elsevier.
 
 source("DBDA2E-utilities.R")
 
@@ -46,21 +46,17 @@ genMCMC = function( datFrm, yName="y" , xName="x" , numSavedSteps=50000 ,
     unifLo <- sdY/1000 ;
     unifHi <- sdY*1000 ;
     normalSigma <- sdY*100 ;
-    expLambda <- 1/29.0 ;
+    expLambda <- 1/30.0 ;
   }
   parameters {
-    real<lower=0> nuMinusOne ; 
+    real<lower=0> nu ; 
     real mu[2] ;               // 2 groups
     real<lower=0> sigma[2] ;   // 2 groups
-  }
-  transformed parameters {
-    real<lower=0> nu ;         // actually lower=1
-    nu <- nuMinusOne + 1 ;
   }
   model {
     sigma ~ uniform( unifLo , unifHi ) ; // vectorized
     mu ~ normal( meanY , normalSigma ) ; // vectorized
-    nuMinusOne ~ exponential( expLambda ) ;
+    nu ~ exponential( expLambda ) ;
     for ( i in 1:Ntotal ) {
       y[i] ~ student_t( nu , mu[x[i]] , sigma[x[i]] ) ;
     }
@@ -76,7 +72,7 @@ genMCMC = function( datFrm, yName="y" , xName="x" , numSavedSteps=50000 ,
   # Regarding initial values in next line: (1) sigma will tend to be too big if 
   # the data have outliers, and (2) nu starts at 5 as a moderate value. These
   # initial values keep the burn-in period moderate.
-  initsList = list( mu = mu , sigma = sigma , nuMinusOne = 4 )
+  initsList = list( mu = mu , sigma = sigma , nu = 5 )
   #-----------------------------------------------------------------------------
   # RUN THE CHAINS
   parameters = c( "mu" , "sigma" , "nu" )     # The parameters to be monitored
